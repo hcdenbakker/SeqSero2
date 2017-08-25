@@ -530,7 +530,7 @@ def main():
   new_file=open("Seqsero_result.txt","w")
   new_file.write("Input files:\t"+for_fq+" "+rev_fq+"\n"+"O antigen prediction:\t"+"O-"+O_choice+"\n"+"H1 antigen prediction(fliC):\t"+fliC_choice+"\n"+"H2 antigen prediction(fljB):\t"+fljB_choice+"\n"+"Predicted antigenic profile:\t"+predict_form+"\n"+"Predicted serotype(s):\t"+predict_sero+star+"\n"+star+star_line+claim+"\n")#+##
   new_file.close()
-  #print(for_fq + '\t' + predict_form + '\t' + predict_sero)
+  print(for_fq + '\t' + predict_form + '\t' + predict_sero)
 
 if __name__ == '__main__':
   main()
