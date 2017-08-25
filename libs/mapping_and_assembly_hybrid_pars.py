@@ -239,15 +239,15 @@ def decide_O_type_and_get_special_genes(Final_list):
     #not consider O-1,3,19_not_in_3,10, too short compared with others
     if "O-1,3,19_not_in_3,10" not in x[0] and int(x[0].split("__")[1].split("___")[0])+800 <= int(x[0].split("length_")[1].split("_")[0]):#gene length << contig length; for now give 300*2 (for secureity can use 400*2) as flank region
       pointer=x[0].split("___")[1].strip()#store the contig name
-      print pointer
+      #print pointer
     if pointer!=0:#it has potential merge event
       for y in Final_list:
         if pointer in y[0] and y not in final_O and (y[1]>=int(y[0].split("__")[1].split("___")[0])*1.5 or (y[1]>=int(y[0].split("__")[1].split("___")[0])*y[2] and y[1]>=400)):#that's a realtively strict filter now; if passed, it has merge event and add one more to final_O
           potenial_new_gene=y
-          print potenial_new_gene
+          #print potenial_new_gene
           break
   if potenial_new_gene!="":
-    print "two differnt genes in same contig, fix it for O antigen"
+    #print "two differnt genes in same contig, fix it for O antigen"
     final_O.append(potenial_new_gene)
   ### end of the two genes on same contig test
   if len(final_O)==0:
