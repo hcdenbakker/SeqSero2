@@ -380,7 +380,7 @@ def seqsero_from_formula_to_serotypes(Otype,fliC,fljB,special_gene_list):
     for x in special_gene_list:
       if x[0].startswith("sdf"):
         sdf="+"
-    predict_form=predict_form+"\nSdf prediction:"+sdf
+    predict_form=predict_form+" Sdf prediction:"+sdf
     if sdf=="-":
       star="*"
       star_line="Additional characterization is necessary to assign a serotype to this strain.  Commonly circulating strains of serotype Enteritidis are sdf+, although sdf- strains of serotype Enteritidis are known to exist. Serotype Gallinarum is typically sdf- but should be quite rare. Sdf- strains of serotype Enteritidis and serotype Gallinarum can be differentiated by phenotypic profile or genetic criteria.\n"#+##
