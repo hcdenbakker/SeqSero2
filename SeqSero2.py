@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+from __future__ import print_function
 ############################################################################
 # Copyright (c) 2014-2015 University of Georgia
 # Developer: Shaokang Zhang, zskzsk@uga.edu
@@ -38,15 +38,15 @@ def main():
     os.chdir(make_dir)
     if output == 'tab':
         os.system(
-            "python2.7 " + dirpath + "/libs/mapping_and_assembly_hybrid_pars.py H_and_O_and_specific_genes.fasta " + mapping_mode + " " + str(
+            "python " + dirpath + "/libs/mapping_and_assembly_hybrid_pars.py H_and_O_and_specific_genes.fasta " + mapping_mode + " " + str(
                 threads) + " " + fnameA + " " + fnameB)
     else:
-        os.system("python2.7 "+dirpath+"/libs/mapping_and_assembly_hybrid.py H_and_O_and_specific_genes.fasta "+mapping_mode+" "+str(threads)+" "+fnameA+" "+fnameB)
+        os.system("python "+dirpath+"/libs/mapping_and_assembly_hybrid.py H_and_O_and_specific_genes.fasta "+mapping_mode+" "+str(threads)+" "+fnameA+" "+fnameB)
     os.system("rm H_and_O_and_specific_genes.fasta* *.bam *.sam *.fastq *.fastq.gz *.fq temp.txt *.xml "+fnameA+"*_db* 2> /dev/null")
     if output == 'tab':
         pass
     else:
-        print "Output_directory:",make_dir
+        print("Output_directory:",make_dir)
     #print "\n\n\nResult:\n"
     #os.system("cat Seqsero_result.txt")
 

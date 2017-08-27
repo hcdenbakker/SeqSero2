@@ -1,10 +1,10 @@
+from __future__ import print_function
 import os,sys,glob,time,itertools,subprocess
 from Initial_Conditions import phase1
 from Initial_Conditions import phase2
 from Initial_Conditions import phaseO
 from Initial_Conditions import sero
 from distutils.version import LooseVersion
-
 
 
 
@@ -239,15 +239,15 @@ def decide_O_type_and_get_special_genes(Final_list):
     #not consider O-1,3,19_not_in_3,10, too short compared with others
     if "O-1,3,19_not_in_3,10" not in x[0] and int(x[0].split("__")[1].split("___")[0])+800 <= int(x[0].split("length_")[1].split("_")[0]):#gene length << contig length; for now give 300*2 (for secureity can use 400*2) as flank region
       pointer=x[0].split("___")[1].strip()#store the contig name
-      print pointer
+      print(pointer)
     if pointer!=0:#it has potential merge event
       for y in Final_list:
         if pointer in y[0] and y not in final_O and (y[1]>=int(y[0].split("__")[1].split("___")[0])*1.5 or (y[1]>=int(y[0].split("__")[1].split("___")[0])*y[2] and y[1]>=400)):#that's a realtively strict filter now; if passed, it has merge event and add one more to final_O
           potenial_new_gene=y
-          print potenial_new_gene
+          print(potenial_new_gene)
           break
   if potenial_new_gene!="":
-    print "two differnt genes in same contig, fix it for O antigen"
+    print("two differnt genes in same contig, fix it for O antigen")
     final_O.append(potenial_new_gene)
   ### end of the two genes on same contig test
   if len(final_O)==0:
@@ -371,7 +371,7 @@ def seqsero_from_formula_to_serotypes(Otype,fliC,fljB,special_gene_list):
   if len(seronames)>1:#there are two possible predictions for serotypes
     star="*"
     star_line="The predicted serotypes share the same general formula:\t"+Otype+":"+fliC+":"+fljB+"\n"##
-  print "\n"
+  print("\n")
   predict_form=Otype+":"+fliC+":"+fljB#
   predict_sero=(" or ").join(seronames)
   ###special test for Enteritidis
@@ -435,10 +435,10 @@ def main():
   combined_fq=for_fq+"_combined.fq"
   for_sai=for_fq+".sai"
   rev_sai=rev_fq+".sai"
-  print "building database..."
+  print("building database...")
   #os.system("bwa index "+database+ " 2> /dev/null")
   os.system("bwa index "+database+ " 2>> data_log.txt ")
-  print "mapping..."
+  print("mapping...")
   if mapping_mode=="mem":
     os.system("bwa mem -t "+threads+" "+database+" "+for_fq+" "+rev_fq+" > "+sam+ " 2>> data_log.txt")
   elif mapping_mode=="sam":
@@ -450,8 +450,9 @@ def main():
   ### check the version of samtools then use differnt commands
   samtools_version=subprocess.Popen(["samtools"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
   out, err = samtools_version.communicate()
+  err = err.decode('utf-8')
   version = err.split("ersion:")[1].strip().split(" ")[0].strip()
-  print "check samtools version:",version
+  print("check samtools version:",version)
   if LooseVersion(version)<=LooseVersion("1.2"):
     os.system("samtools sort -@ "+threads+" -n "+bam+" "+for_fq+"_sorted")
   else:
@@ -460,7 +461,7 @@ def main():
   os.system("bamToFastq -i "+sorted_bam+" -fq "+combined_fq)
   os.system("bamToFastq -i "+sorted_bam+" -fq "+mapped_fq1+" -fq2 "+mapped_fq2 + " 2>> data_log.txt")#2> /dev/null if want no output
   outdir=current_time+"_temp"
-  print "assembling..."
+  print("assembling...")
   if int(threads)>4:
     t="4"
   else:
@@ -470,8 +471,8 @@ def main():
   os.system("mv "+outdir+"/contigs.fasta "+new_fasta+ " 2> /dev/null")
   os.system("rm -rf "+outdir+ " 2> /dev/null")
   ### begin blast
-  print "blasting..."
-  print "\n"
+  print("blasting...")
+  print("\n")
   xmlfile=for_fq+"-extracted_vs_"+database+"_"+mapping_mode+".xml"
   os.system('makeblastdb -in '+new_fasta+' -out '+new_fasta+'_db '+'-dbtype nucl >> data_log.txt 2>&1') #temp.txt is to forbid the blast result interrupt the output of our program###1/27/2015
   os.system("blastn -word_size 10 -query "+database+" -db "+new_fasta+"_db -out "+xmlfile+" -outfmt 5 >> data_log.txt 2>&1")###1/27/2015
@@ -488,20 +489,20 @@ def main():
   O_choice=O_choice.split("-")[-1].strip()
   H_contig_roles=decide_contig_roles_for_H_antigen(Final_list)#decide the H antigen contig is fliC or fljB
   log_file=open("SeqSero_hybrid_assembly_log.txt","a")
-  print "O_contigs:"
+  print("O_contigs:")
   log_file.write("O_contigs:\n")
   for x in O_nodes_roles:
     if "O-1,3,19_not_in_3,10" not in x[0]:#O-1,3,19_not_in_3,10 is just a small size marker
-      print x[0].split("___")[-1],x[0].split("__")[0],"blast score:",x[1],"identity%:",str(round(x[2]*100,2))+"%"
+      print(x[0].split("___")[-1],x[0].split("__")[0],"blast score:",x[1],"identity%:",str(round(x[2]*100,2))+"%")
       log_file.write(x[0].split("___")[-1]+" "+x[0].split("__")[0]+" "+"blast score: "+str(x[1])+"identity%:"+str(round(x[2]*100,2))+"%"+"\n")
-  print "H_contigs:"
+  print("H_contigs:")
   log_file.write("H_contigs:\n")
   H_contig_stat=[]
   for x in H_contig_roles:
     a=0
     for y in Final_list_passed:
         if x[1] in y[0] and y[0].startswith(x[0]):
-            print x[1],x[0],y[0].split("_")[1],"blast_score:",y[1],"identity%:",str(round(y[2]*100,2))+"%"
+            print(x[1],x[0],y[0].split("_")[1],"blast_score:",y[1],"identity%:",str(round(y[2]*100,2))+"%")
             log_file.write(x[1]+" "+x[0]+" "+y[0].split("_")[1]+" "+"blast_score: "+str(y[1])+" identity%:"+str(round(y[2]*100,2))+"%"+"\n")
             break
   for x in H_contig_roles:
@@ -519,11 +520,11 @@ def main():
       fljB_choice=x[0].split("_")[1]
     elif fliC_choice!="-" and fljB_choice!="-":
       break
-  print "\n"
-  print "SeqSero Input files:",for_fq,rev_fq
-  print "Most possible O antigen:",O_choice
-  print "Most possible H1 antigen:",fliC_choice
-  print "Most possible H2 antigen:",fljB_choice
+  print("\n")
+  print("SeqSero Input files:",for_fq,rev_fq)
+  print("Most possible O antigen:",O_choice)
+  print("Most possible H1 antigen:",fliC_choice)
+  print("Most possible H2 antigen:",fljB_choice)
   #print Final_list
   ###output
   predict_form,predict_sero,star,star_line,claim=seqsero_from_formula_to_serotypes(O_choice,fliC_choice,fljB_choice,special_gene_list)
